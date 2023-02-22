@@ -1,0 +1,144 @@
+Созданние БД спортсменов (athletes).
+Создание в БД athletes таблиц со связями согласно ER-диаграмме:
+athletesData - информация о спортсменах;
+competitions - соревнования;
+results - результаты;
+winners - призовые места
+_________________________________________________________________________________________________________________________________________________________________________________
+CREATE DATABASE athletes;
+
+CREATE TABLE athletesData 
+(Id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT, Fullname VARCHAR(255), Email VARCHAR(255), PhoneNumber VARCHAR(20), 
+Birthday DATE, Age TINYINT UNSIGNED, TimeInsert DATETIME, Passport TINYINT UNSIGNED, PlaceCompetition SMALLINT UNSIGNED, 
+Biography TEXT, VideoPresentation LONGBLOB);
+
+SHOW COLUMNS FROM athletesData;
++-------------------+-------------------+------+-----+---------+----------------+
+| Field             | Type              | Null | Key | Default | Extra          |
++-------------------+-------------------+------+-----+---------+----------------+
+| Id                | int unsigned      | NO   | PRI | NULL    | auto_increment |
+| Fullname          | varchar(255)      | YES  |     | NULL    |                |
+| Email             | varchar(255)      | YES  |     | NULL    |                |
+| PhoneNumber       | varchar(20)       | YES  |     | NULL    |                |
+| Birthday          | date              | YES  |     | NULL    |                |
+| Age               | tinyint unsigned  | YES  |     | NULL    |                |
+| TimeInsert        | datetime          | YES  |     | NULL    |                |
+| Passport          | tinyint unsigned  | YES  |     | NULL    |                |
+| PlaceCompetition  | smallint unsigned | YES  |     | NULL    |                |
+| Biography         | text              | YES  |     | NULL    |                |
+| VideoPresentation | longblob          | YES  |     | NULL    |                |
++-------------------+-------------------+------+-----+---------+----------------+
+
+
+CREATE TABLE competitions (Id INT PRIMARY KEY AUTO_INCREMENT, Name Varchar(255), Id_athletes INT UNSIGNED, 
+FOREIGN KEY (Id_athletes) REFERENCES athletesData(Id));
+
+SHOW COLUMNS FROM competitions;
++-------------+--------------+------+-----+---------+----------------+
+| Field       | Type         | Null | Key | Default | Extra          |
++-------------+--------------+------+-----+---------+----------------+
+| Id          | int          | NO   | PRI | NULL    | auto_increment |
+| Name        | varchar(255) | YES  |     | NULL    |                |
+| Id_athletes | int unsigned | YES  | MUL | NULL    |                |
++-------------+--------------+------+-----+---------+----------------+
+
+CREATE TABLE results (Id INT PRIMARY KEY AUTO_INCREMENT, Id_competition INT, Place INT UNSIGNED, Id_athlete INT UNSIGNED, 
+FOREIGN KEY (Id_competition) REFERENCES competitions(Id), FOREIGN KEY (Id_athlete) REFERENCES athletesData(Id));
+
+SHOW COLUMNS FROM results;
++----------------+--------------+------+-----+---------+----------------+
+| Field          | Type         | Null | Key | Default | Extra          |
++----------------+--------------+------+-----+---------+----------------+
+| Id             | int          | NO   | PRI | NULL    | auto_increment |
+| Id_competition | int          | YES  | MUL | NULL    |                |
+| Place          | int unsigned | YES  |     | NULL    |                |
+| Id_athlete     | int unsigned | YES  | MUL | NULL    |                |
++----------------+--------------+------+-----+---------+----------------+
+
+CREATE TABLE winners (Id INT PRIMARY KEY AUTO_INCREMENT, Result INT, Athlete INT UNSIGNED, Competition INT, 
+FOREIGN KEY (Result) REFERENCES results(Id), FOREIGN KEY (Athlete) REFERENCES athletesData(Id), FOREIGN KEY (competition) REFERENCES competitions(Id));
+
+SHOW COLUMNS FROM winners;
++-------------+--------------+------+-----+---------+----------------+
+| Field       | Type         | Null | Key | Default | Extra          |
++-------------+--------------+------+-----+---------+----------------+
+| Id          | int          | NO   | PRI | NULL    | auto_increment |
+| Result      | int          | YES  | MUL | NULL    |                |
+| Athlete     | int unsigned | YES  | MUL | NULL    |                |
+| Competition | int          | YES  | MUL | NULL    |                |
++-------------+--------------+------+-----+---------+----------------+
+
+_________________________________________________________________________________________________________________________________________________________________________________
+"Заполнение таблиц athletesData и competitions Тестовыми данными"
+INSERT athletesData (Fullname) Values ('Иванов Иван Иванович'), ('Петров Петр Петрович'), ('Федоров Федр Федорович'), 
+('Денисенко Денис Денисович'), ('Егоров Егор Егорович'), ('Алексеенко Алексей Алексевич'), ('Александров Александр Александрович');
+
+SELECT * FROM athletesData;
++----+-------------------------------------+-------+-------------+----------+------+------------+----------+------------------+-----------+--------------------------------------+
+| Id | Fullname                            | Email | PhoneNumber | Birthday | Age  | TimeInsert | Passport | PlaceCompetition | Biography | VideoPresentation                    |
++----+-------------------------------------+-------+-------------+----------+------+------------+----------+------------------+-----------+--------------------------------------+
+|  1 | Иванов Иван Иванович                | NULL  | NULL        | NULL     | NULL | NULL       |     NULL |             NULL | NULL      | NULL                                 |
+|  2 | Петров Петр Петрович                | NULL  | NULL        | NULL     | NULL | NULL       |     NULL |             NULL | NULL      | NULL                                 |
+|  3 | Федоров Федр Федорович              | NULL  | NULL        | NULL     | NULL | NULL       |     NULL |             NULL | NULL      | NULL                                 |
+|  4 | Денисенко Денис Денисович           | NULL  | NULL        | NULL     | NULL | NULL       |     NULL |             NULL | NULL      | NULL                                 |
+|  5 | Егоров Егор Егорович                | NULL  | NULL        | NULL     | NULL | NULL       |     NULL |             NULL | NULL      | NULL                                 |
+|  6 | Алексеенко Алексей Алексевич        | NULL  | NULL        | NULL     | NULL | NULL       |     NULL |             NULL | NULL      | NULL                                 |
+|  7 | Александров Александр Александрович | NULL  | NULL        | NULL     | NULL | NULL       |     NULL |             NULL | NULL      | NULL                                 |
++----+-------------------------------------+-------+-------------+----------+------+------------+----------+------------------+-----------+--------------------------------------+
+
+INSERT competitions (Name, Id_athletes) Values ('run 100 metr', 1),('run 100 metr', 2),('run 100 metr', 3),('run 100 metr', 4),('run 100 metr', 5),
+('run 200 metr', 1),('run 200 metr', 2),('run 200 metr', 3),('run 200 metr', 4),('run 400 metr', 1),('run 400 metr', 2),('run 400 metr', 3),('run 400 metr', 4), 
+('jump', 1), ('jump', 2),('jump', 3),('jump', 4), ('running with obstacles', 2),('running with obstacles', 3),('running with obstacles', 4), ('strength exercises', 7),('strength exercises', 6), ('strength exercises', 5),('strength exercises', 4),
+('strength exercises', 3), ('stretching', 7), ('stretching', 6), ('stretching', 5), ('stretching', 4);
+
+SELECT * FROM competitions;
++----+------------------------+-------------+
+| Id | Name                   | Id_athletes |
++----+------------------------+-------------+
+|  1 | run 100 metr           |           1 |
+|  2 | run 100 metr           |           2 |
+|  3 | run 100 metr           |           3 |
+|  4 | run 100 metr           |           4 |
+|  5 | run 100 metr           |           5 |
+|  6 | run 200 metr           |           1 |
+|  7 | run 200 metr           |           2 |
+|  8 | run 200 metr           |           3 |
+|  9 | run 200 metr           |           4 |
+| 10 | run 400 metr           |           1 |
+| 11 | run 400 metr           |           2 |
+| 12 | run 400 metr           |           3 |
+| 13 | run 400 metr           |           4 |
+| 14 | jump                   |           1 |
+| 15 | jump                   |           2 |
+| 16 | jump                   |           3 |
+| 17 | jump                   |           4 |
+| 18 | running with obstacles |           2 |
+| 19 | running with obstacles |           3 |
+| 20 | running with obstacles |           4 |
+| 21 | strength exercises     |           7 |
+| 22 | strength exercises     |           6 |
+| 23 | strength exercises     |           5 |
+| 24 | strength exercises     |           4 |
+| 25 | strength exercises     |           3 |
+| 26 | stretching             |           7 |
+| 27 | stretching             |           6 |
+| 28 | stretching             |           5 |
+| 29 | stretching             |           4 |
++----+------------------------+-------------+
+
+_________________________________________________________________________________________________________________________________________________________________________________
+"Задание: Выберите из БД топ 5 ФИО спортсменов, больше остальных посетивших соревнований (одним SQL-запросом и без вложенных SELECT’ов)"
+
+SELECT athletesData.Fullname, COUNT(athletesData.Fullname) as CountCompetitions 
+FROM athletesData LEFT JOIN competitions ON athletesData.Id = competitions.Id_athletes 
+GROUP BY athletesData.Fullname ORDER BY CountCompetitions DESC LIMIT 5;
+
++---------------------------+-------------------+
+| Fullname                  | CountCompetitions |
++---------------------------+-------------------+
+| Денисенко Денис Денисович |                 7 |
+| Федоров Федр Федорович    |                 6 |
+| Петров Петр Петрович      |                 5 |
+| Иванов Иван Иванович      |                 4 |
+| Егоров Егор Егорович      |                 3 |
++---------------------------+-------------------+
